@@ -1,4 +1,4 @@
-<!doctype html>
+w<!doctype html>
 <html lang="en">
 
 	<head>
@@ -13,12 +13,6 @@
 	    <meta name="author" content="">
 
 		<link rel="stylesheet" href="../css/stylesheet.css">
-
-		<!-- Firebase -->
-		<script src="https://cdn.firebase.com/js/client/1.0.23/firebase.js"></script>
-
-		<!-- Firebase Simple Login -->
-		<script src="https://cdn.firebase.com/js/simple-login/1.6.4/firebase-simple-login.js"></script>
 
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -35,10 +29,8 @@
 					<li class="active"><a href="#">Printers</a></li>
 					<li class="dropdown" id="accountmenu"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Printers<b class="caret"></b></a>
 						<ul id="printer-list" class="dropdown-menu">
-							<li><a href="#">F217</a></li>
-							<li><a href="#">F225</a></li>
 							<li class="divider"></li>
-							<li><a href="#">New Printer</a></li>
+							<li><a id="add-new-printer-button" href="#">New Printer</a></li>
 						</ul>
 					</li>
 					<li><a href="https://github.com/mcdonamp/printr">Source</a></li>
@@ -63,11 +55,59 @@
 	    	</div>
     	</div>
 
+    	<!-- Firebase -->
+		<script src="https://cdn.firebase.com/js/client/1.0.23/firebase.js"></script>
+
+		<!-- Firebase Simple Login -->
+		<script src="https://cdn.firebase.com/js/simple-login/1.6.4/firebase-simple-login.js"></script>
+
     	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-		
+
+		<script type="text/javascript">
+			$(function() {
+				// Global vars
+				var currentPrinter = "";
+
+    			// Set up Firebase
+    			var ref = new Firebase('https://printrapp.firebaseio.com');
+    			var printerRef = ref.child('Printers');
+    			var messagesRef = ref.child('Messages');
+
+    			printerRef.on('child_added', function(snapshot){
+    				currentPrinter = snapshot.name();
+    				$('#printer-list').prepend('<li id="printer-' + snapshot.name() + '"><a href="#">' + snapshot.name() + '</a></li>');
+    				$('#printer-'+snapshot.name()).on('click', function(){
+    					currentPrinter = snapshot.name();
+    					$('#printer-name-heading').text(currentPrinter);
+    					$("#message-background").children().hide();
+    					$('#message-'+currentPrinter).show();
+    					console.log(currentPrinter);
+    				});
+    				messagesRef.child(currentPrinter).limit(1).on('child_added', function(snapshot){
+    						console.log(snapshot.name() + " " + snapshot.val());
+    						$('#message-background').append('<p id="message-' + currentPrinter + '">' + snapshot.val()['message'] + '</p>');
+    				});
+    			});
+
+    			printerRef.on('child_removed', function(snapshot){
+    				$('#printer-'+snapshot.name()).remove();
+    			});
+
+    			// Set up listeners on buttons
+    			$("#button-post").on('click', function() {
+    				var text = $('#message-input-field').val();
+    				messagesRef.child(currentPrinter).push({"username":"Mike","message":text});
+    				// console.log(text);
+    			});
+
+    			$("#add-new-printer-button").on('click', function() {
+    				console.log("Pop up a new modal for the printer");
+    			});
+			});
+		</script>
 	</body>
 </html>
