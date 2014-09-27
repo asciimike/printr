@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Printr -- HP Backed Social Network</title>
+
+		<meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+
+		<link rel="stylesheet" href="../css/stylesheet.css">
+
+		<!-- Firebase -->
+		<script src="https://cdn.firebase.com/js/client/1.0.23/firebase.js"></script>
+
+		<!-- Firebase Simple Login -->
+		<script src="https://cdn.firebase.com/js/simple-login/1.6.4/firebase-simple-login.js"></script>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
+
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="header">
+				<ul class="nav nav-pills pull-right">
+					<li class="active"><a href="#">Printers</a></li>
+					<li class="dropdown" id="accountmenu"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Printers<b class="caret"></b></a>
+						<ul id="printer-list" class="dropdown-menu">
+							<li><a href="#">F217</a></li>
+							<li><a href="#">F225</a></li>
+							<li class="divider"></li>
+							<li><a href="#">New Printer</a></li>
+						</ul>
+					</li>
+					<li><a href="https://github.com/mcdonamp/printr">Source</a></li>
+				</ul>
+				<h3 class="text-muted">Printr</h3>
+			</div>
+
+			<div class="jumbotron">
+				<h2 id="printer-name-heading">Printer Name</h2>
+				<div id="message-background"></div>
+			</div>
+
+		 	<div class="input-group">
+		      	<input id="message-input-field" type="text" class="form-control">
+		     		<span class="input-group-btn">
+		        		<button id="button-post" class="btn btn-default" type="button">Printr!</button>
+		      	</span>
+			</div>
+
+	    	<div class="footer">
+	    		<p>&copy; Mike McDonald 2014</p>
+	    	</div>
+    	</div>
+
+    	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		
+	</body>
+</html>
