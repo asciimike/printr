@@ -10,7 +10,7 @@ Clone the repo by using:
 git clone https://github.com/mcdonamp/printr.git
 ```
 ### Firebase 
-[Sign up](https://www.firebase.com/signup) for a free Firebase account, and create a new Firebase to store your printer 
+[Sign up](https://www.firebase.com/signup) for a free Firebase account, and create a new Firebase to store your printer information and messages.
 
 ### Edit and import `printers.json`
 This file contains a list of printers, their names, locations, and IP addresses. You can edit it to suit your needs, then upload it to Firebase via the JSON import button on the Firebase dashboard.
@@ -18,7 +18,7 @@ This file contains a list of printers, their names, locations, and IP addresses.
 ## Front End
 The front end can be tested locally by spinning up a local python server:
 
-```python
+```shell
 python -m SimpleHTTPServer 8000
 ```
 
