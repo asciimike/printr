@@ -12,6 +12,24 @@
 			"Location" : "F225",
 			"Name" : "F225",
 			"IP" : "137.112.120.113"
+		},
+		"Main House" : 
+		{
+			"Location" : "Main House First Floor",
+			"Name" : "Main House",
+			"IP" : "192.168.1.21"
+		},
+		"Alden" : 
+		{
+			"Location" : "Alden Chapter Room",
+			"Name" : "Alden",
+			"IP" : "192.168.1.22"
+		},
+		"Annex" : 
+		{
+			"Location" : "Annex Study Room",
+			"Name" : "Annex",
+			"IP" : "192.168.1.20"
 		}
 	}
 }
