@@ -7,56 +7,41 @@ var STYLE_ELIPSES = 1;
 function main(){
 	var ref = new Firebase('https://printrapp.firebaseio.com');
 	var printerRef = ref.child('Printers');
-	var messageRef = ref.child('Messages');
-	var printers = {};
 
-	// Handle addition, updates, and removal of printers
 	printerRef.on('child_added', function(snapshot){
-		printers[snapshot.name()] = snapshot.val();
+		sendMessage(snapshot);
 	});
 
 	printerRef.on('child_changed', function(snapshot){
-		printers[snapshot.name()] = snapshot.val();
+		sendMessage(snapshot);
+	});
+}
+
+function sendMessage(snapshot) {
+	var hostIP = snapshot.val()['IP'];
+	var data = snapshot.val()['Message'];
+	var username = data['username'];
+	var message = data['message'];
+	var formattedMessage = formatMessage(username, message);
+
+	// Connect to the printer and update the text
+	var printer = net.connect({port:JETDIRECT_PORT, host:hostIP}, function(){
+		printer.write("@PJL RDYMSG DISPLAY = " +  formattedMessage + "\n");
+		printer.end();
 	});
 
-	printerRef.on('child_removed', function(snapshot){
-		delete printers[snapshot.name()];
+	// Deal with callbacks
+	printer.on('data', function(data){
+		console.log(data.toString());
 	});
 
-	// Any time a new printer is added, we've got to monitor it's messages
-	messageRef.on('child_added', function(snapshot){
-		var name = snapshot.name();
-		var hostIP = printers[name]['IP'];
-		var printerMessageRef = messageRef.child(name);
+	printer.on('error', function(error){
+		console.log(error);
+		printer.end();
+	});
 
-		// Get most recent message for each printer
-		printerMessageRef.limit(1).on('child_added', function(snapshot){
-			// Pull out data about the message, and connect it up with a printer
-			var data = snapshot.val();
-			var username = data['username'];
-			var message = data['message'];
-			var formattedMessage = formatMessage(username, message);
-			console.log(formattedMessage + " !!!!!!");
-			// Connect to the printer and update the text
-			var printer = net.connect({port:JETDIRECT_PORT, host:hostIP}, function(){
-				printer.write("@PJL RDYMSG DISPLAY = " +  formattedMessage + "\n");
-				printer.end();
-			});
-
-			// Deal with callbacks
-			printer.on('data', function(data){
-				console.log(data.toString());
-			});
-
-			printer.on('error', function(error){
-				console.log(error);
-				printer.end();
-			});
-
-			printer.on('end', function(){
-				console.log('ending socket');
-			});
-		});
+	printer.on('end', function(){
+		console.log('ending socket');
 	});
 }
 
