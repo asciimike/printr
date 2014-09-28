@@ -115,6 +115,7 @@
     					$('#printer-name-heading').text(currentPrinter);
     					$("#message-background").children().remove();
     					printerRef.child(currentPrinter+'/Message').on('value', function(snapshot){
+    						$("#message-background").children().remove();
     						$("#message-background").append(formatMessage(snapshot.val()));
     					});
     				});
@@ -146,7 +147,6 @@
     				} else if (!currentUser) {
     					alert('Please log in');
     				} else {
-    					$("#message-background").children().remove();
     					printerRef.child(currentPrinter+'/Message').set({'username':currentUser,'message':text});
     					$('#message-input-field').val('');
     				}
