@@ -107,6 +107,7 @@
     			var ref = new Firebase('https://printrapp.firebaseio.com');
     			var printerRef = ref.child('Printers');
 
+    			// Watches for new printers being added, and sets up messages listener
     			printerRef.on('child_added', function(snapshot){
     				$('#printer-list').prepend('<li id="printer-' + snapshot.name() + '"><a href="#">' + snapshot.name() + '</a></li>');
 
@@ -121,6 +122,7 @@
     				});
     			});
 
+    			// Authentication callback fires whenever there is a change in auth state
     			var authRef = new FirebaseSimpleLogin(ref, function(error, user){
     				if (error) {
     					alert('Login error occurred: ' + error)
@@ -176,6 +178,7 @@
     				authRef.logout();
     			});
 
+    			// Helper function for formatting messages
     			function formatMessage(message){
     				var username = "<p>" + message.username + ":</p>";
     				var message = "<p>" + message.message + "</p>";
