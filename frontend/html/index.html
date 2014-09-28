@@ -26,7 +26,7 @@
 		<div class="container">
 			<div class="header">
 				<ul class="nav nav-pills pull-right">
-					<li class="active"><a href="#">Printers</a></li>
+					<li class="active"><a href="#">Home</a></li>
 					<li class="dropdown" id="accountmenu"> <a class="dropdown-toggle" data-toggle="dropdown" href="#">Printers<b class="caret"></b></a>
 						<ul id="printer-list" class="dropdown-menu">
 							<li class="divider"></li>
@@ -34,13 +34,16 @@
 						</ul>
 					</li>
 					<li><a href="https://github.com/mcdonamp/printr">Source</a></li>
+					<li><a id="login-button" href="#">Log in</a></li>
+					<li><a id="logout-button" href="#">Log out</a></li>
 				</ul>
-				<h3 class="text-muted">Printr</h3>
+					<img style="max-width:36px; margin-right:10px; position-bottom:-10px; float:left" src="../img/printer.png">
+					<h3 class="text-muted">Printr</h3>
 			</div>
 
 			<div class="jumbotron">
-				<h2 id="printer-name-heading">Printer Name</h2>
-				<div id="message-background"></div>
+				<h2 id="printer-name-heading">Select a printer!</h2>
+				<div class="well well-sm" id="message-background"></div>
 			</div>
 
 		 	<div class="input-group">
@@ -53,6 +56,31 @@
 	    	<div class="footer">
 	    		<p>&copy; Mike McDonald 2014</p>
 	    	</div>
+
+	    	<div id="new-printer-modal" class="modal fade">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        <h4 class="modal-title">Add a printer</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div class="input-group">
+					  <input id="printer-name-input" type="text" class="form-control" placeholder="Name">
+					</div>
+					<div class="input-group">
+					  <input id="printer-location-input" type="text" class="form-control" placeholder="Location">
+					</div>
+					<div  class="input-group">
+					  <input id="printer-ip-input" type="text" class="form-control" placeholder="IP Address">
+					</div>
+			      </div>
+			      <div class="modal-footer">
+			        <button id="submit-new-printer-button" type="button" class="btn btn-primary">Add</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
     	</div>
 
     	<!-- Firebase -->
@@ -67,46 +95,92 @@
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
+		<!-- Page Script -->
 		<script type="text/javascript">
 			$(function() {
 				// Global vars
-				var currentPrinter = "";
+				var currentPrinter = '';
+				var currentUser = '';
+				var newPrinterModal = $('#new-printer-modal').modal({ show: false })
 
     			// Set up Firebase
     			var ref = new Firebase('https://printrapp.firebaseio.com');
     			var printerRef = ref.child('Printers');
-    			var messagesRef = ref.child('Messages');
 
     			printerRef.on('child_added', function(snapshot){
-    				currentPrinter = snapshot.name();
     				$('#printer-list').prepend('<li id="printer-' + snapshot.name() + '"><a href="#">' + snapshot.name() + '</a></li>');
+
     				$('#printer-'+snapshot.name()).on('click', function(){
     					currentPrinter = snapshot.name();
     					$('#printer-name-heading').text(currentPrinter);
-    					$("#message-background").children().hide();
-    					$('#message-'+currentPrinter).show();
-    					console.log(currentPrinter);
-    				});
-    				messagesRef.child(currentPrinter).limit(1).on('child_added', function(snapshot){
-    						console.log(snapshot.name() + " " + snapshot.val());
-    						$('#message-background').append('<p id="message-' + currentPrinter + '">' + snapshot.val()['message'] + '</p>');
+    					$("#message-background").children().remove();
+    					printerRef.child(currentPrinter+'/Message').on('value', function(snapshot){
+    						$("#message-background").append(formatMessage(snapshot.val()));
+    					});
     				});
     			});
 
-    			printerRef.on('child_removed', function(snapshot){
-    				$('#printer-'+snapshot.name()).remove();
+    			var authRef = new FirebaseSimpleLogin(ref, function(error, user){
+    				if (error) {
+    					alert('Login error occurred: ' + error)
+    				} else if (user) {
+    					currentUser = user.thirdPartyUserData.name;
+    					$('#login-button').hide();
+    					$('#logout-button').show();
+    					$('#message-input-field').show();
+    					$('#button-post').show();
+    				} else {
+    					currentUser = '';
+    					$('#login-button').show();
+    					$('#logout-button').hide();
+    					$('#message-input-field').hide();
+    					$('#button-post').hide();
+    				}
     			});
 
     			// Set up listeners on buttons
     			$("#button-post").on('click', function() {
     				var text = $('#message-input-field').val();
-    				messagesRef.child(currentPrinter).push({"username":"Mike","message":text});
-    				// console.log(text);
+    				if (!currentPrinter) {
+    					alert('Select a printer!');
+    				} else if (!currentUser) {
+    					alert('Please log in');
+    				} else {
+    					$("#message-background").children().remove();
+    					printerRef.child(currentPrinter+'/Message').set({'username':currentUser,'message':text});
+    					$('#message-input-field').val('');
+    				}
     			});
 
     			$("#add-new-printer-button").on('click', function() {
-    				console.log("Pop up a new modal for the printer");
+    				newPrinterModal.modal('show');
     			});
+
+    			$("#submit-new-printer-button").on('click', function() {
+    				var name = $('#printer-name-input').val();
+    				var location = $('#printer-location-input').val();
+    				var ip = $('#printer-ip-input').val();
+    				printerRef.child(name).set({'Name':name, 'Location':location, 'IP':ip});
+    				newPrinterModal.modal('hide');
+    			});
+
+    			$("#logout-button").on('click', function(){
+    				location.reload();
+    			});
+
+    			$("#login-button").on('click', function(){
+    				authRef.login('twitter');
+    			});
+
+    			$("#logout-button").on('click', function(){
+    				authRef.logout();
+    			});
+
+    			function formatMessage(message){
+    				var username = "<p>" + message.username + ":</p>";
+    				var message = "<p>" + message.message + "</p>";
+    				return username + message;
+    			};
 			});
 		</script>
 	</body>

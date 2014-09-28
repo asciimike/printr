@@ -4,6 +4,20 @@ body {
   padding-bottom: 20px;
 }
 
+#message-background {
+  font-family: "Courier New", monospace;
+  background-color: white;
+}
+
+.input-group {
+  margin-bottom: 10px;
+}
+
+.jumbotron {
+  padding-top: 5px !important;
+  padding-bottom: 20px !important;
+}
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -49,14 +63,6 @@ body {
 .jumbotron .btn {
   padding: 14px 24px;
   font-size: 21px;
-}
-
-/* Supporting marketing content */
-.marketing {
-  margin: 40px 0;
-}
-.marketing p + h4 {
-  margin-top: 28px;
 }
 
 /* Responsive: Portrait tablets and up */
