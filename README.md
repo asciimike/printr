@@ -13,14 +13,23 @@ git clone https://github.com/mcdonamp/printr.git
 [Sign up](https://www.firebase.com/signup) for a free Firebase account, and create a new Firebase to store your printer information and messages.
 
 ### Edit and import `printers.json`
-This file contains a list of printers, their names, locations, and IP addresses. You can edit it to suit your needs, then upload it to Firebase via the JSON import button on the Firebase dashboard.
+This file contains a list of printers, their names, locations, and IP addresses. You can edit it to suit your needs, then upload it to Firebase via the JSON import button on the Firebase dashboard. Alternatively, you can simple add printers from within the application.
+
+### Set up Twitter
+This app currently uses Twitter for authentication, so you must:
+1. Set up a Twitter application
+2. Set up your Firebase to use Twitter
+
+For more information check out our [Twitter authentication docs](https://www.firebase.com/docs/web/guide/simple-login/twitter.html).
 
 ## Front End
 The front end can be tested locally by spinning up a local python server:
 
 ```shell
-python -m SimpleHTTPServer 8000
+python -m SimpleHTTPServer
 ```
+
+Note that this is necessary in order to test with Firebase Simple Login.
 
 The front end can then be deployed using:
 
